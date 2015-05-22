@@ -1,4 +1,4 @@
-package edu.washington.crew.facebookevents;
+package edu.washington.crew.fbevents;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
