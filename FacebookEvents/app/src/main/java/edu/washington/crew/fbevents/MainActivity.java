@@ -3,9 +3,16 @@ package edu.washington.crew.fbevents;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
 import com.facebook.FacebookSdk;
+
+import java.io.IOException;
+
+import edu.washington.crew.fbevents.FacebookEventsApp.*;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -15,10 +22,18 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
+//        FacebookSdk.sdkInitialize(getApplicationContext());
+//
+//        Intent loginIntent = new Intent(this, LoginActivity.class);
+//        startActivity(loginIntent);
 
-        Intent loginIntent = new Intent(this, LoginActivity.class);
-        startActivity(loginIntent);
+        FbEventRepository repo = new FbEventRepository();
+        try {
+            repo.generateEventsFromJson(this.getResources().openRawResource(R.raw.data));
+        } catch(IOException e){
+            Toast.makeText(MainActivity.this, "Error: IO Exception", Toast.LENGTH_SHORT).show();
+        }
+        Log.i("MainActivity", repo.getAllEvents().toString());
     }
 
     @Override
