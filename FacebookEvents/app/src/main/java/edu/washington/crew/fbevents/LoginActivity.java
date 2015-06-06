@@ -32,6 +32,8 @@ public class LoginActivity extends ActionBarActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.i(TAG, "Login successful");
+                finish();
+
             }
 
             @Override
@@ -44,6 +46,7 @@ public class LoginActivity extends ActionBarActivity {
                 Log.e(TAG, "Login failed");
             }
         });
+
     }
 
     @Override
@@ -66,5 +69,11 @@ public class LoginActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 }

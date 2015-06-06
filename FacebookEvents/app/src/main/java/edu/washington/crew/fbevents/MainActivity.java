@@ -10,29 +10,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import android.content.pm.*;
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import com.facebook.FacebookSdk;
+import com.facebook.*;
+import com.facebook.login.LoginManager;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 
-import edu.washington.crew.fbevents.FacebookEventsApp.*;
-
-
 public class MainActivity extends ActionBarActivity implements EventFragment.OnFragmentInteractionListener {
+
+    public static final String TAG = "MainActivity";
+
+    private CallbackManager callbackManager;
+    private AccessTokenTracker accessTokenTracker;
+    private AccessToken accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        FacebookSdk.sdkInitialize(getApplicationContext());
-//
-//        Intent loginIntent = new Intent(this, LoginActivity.class);
-//        startActivity(loginIntent);
-
         /* Test code to get all events from repo */
-
-
         // If repo has not been instantiated
         FbEventRepository repo = new FbEventRepository();
         try {
@@ -40,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
         } catch (IOException e) {
             Toast.makeText(MainActivity.this, "Error: IO Exception", Toast.LENGTH_SHORT).show();
         }
-        Log.i("MainActivity", repo.getAllEvents().toString());
+        Log.i(TAG, repo.getAllEvents().toString());
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -48,8 +54,38 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
                     .commit();
         }
 
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
 
+        accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldToken, AccessToken newToken) {
+                updateWithToken(newToken);
+            }
+        };
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
 
+        GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+            @Override
+            public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
+                if (jsonObject != null) {
+                    Log.i(TAG, jsonObject.toString());
+                }
+            }
+        });
+        Bundle params = new Bundle();
+        params.putString("fields", "id,name,link");
+        request.setParameters(params);
+        request.executeAsync();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        accessTokenTracker.stopTracking();
     }
 
     @Override
@@ -69,12 +105,29 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_logout) {
+            LoginManager.getInstance().logOut();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void onFragmentInteraction(String string){
+    public void onFragmentInteraction(String string) {
         //you can leave it empty
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void updateWithToken(AccessToken token) {
+        Log.i(TAG, "Updating with token " + token);
+        if (token == null || token.isExpired()) {
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            startActivity(loginIntent);
+        }
+        accessToken = token;
     }
 }
