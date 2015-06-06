@@ -11,11 +11,8 @@ import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-
 
 public class MainActivity extends ActionBarActivity {
     public static final String TAG = "MainActivity";
@@ -42,11 +39,18 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        accessTokenTracker.stopTracking();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
