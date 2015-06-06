@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="fb_app_id">1612037999078469</string>
-
     <string name="app_name">Facebook Events</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_event_details">EventDetailsActivity</string>
+
 </resources>
