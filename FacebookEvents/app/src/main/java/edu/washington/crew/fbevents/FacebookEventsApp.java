@@ -20,7 +20,7 @@ import java.util.Date;
  */
 
 class FbEventRepository implements EventRepository {
-    private ArrayList<FbEvent> FbEvents;
+    public static ArrayList<FbEvent> FbEvents;
 
     public FbEventRepository () {
         FbEvents = new ArrayList<FbEvent>();
@@ -39,6 +39,7 @@ class FbEventRepository implements EventRepository {
     /* Generates events from Facebook API Json */
     public void generateEventsFromJson(InputStream is) throws IOException {
         // @TODO: Simplify Json reading; there's gotta be an easier way to do this
+        // Maybe GSON?
 
         JsonReader reader = new JsonReader(new InputStreamReader(is, "UTF-8"));
         try {
@@ -63,7 +64,6 @@ class FbEventRepository implements EventRepository {
 
                     while (reader.hasNext()) {
                         String name = reader.nextName();
-                        Log.i("Reader", name);
 
                         if (name.equals("name")) {
                             currentName = reader.nextString();
@@ -84,7 +84,7 @@ class FbEventRepository implements EventRepository {
                 }
                 reader.endArray();
             }
-            /* Skip pager object */
+            /* Skip pager object for now */
             reader.nextName();
             reader.skipValue();
             reader.endObject();
@@ -126,6 +126,11 @@ class FbEvent {
         this.timeZone = timeZone;
         this.id = id;
         this.rsvpStatus = rsvpStatus;
+    }
+
+    @Override
+    public String toString() {
+        return this.eventName;
     }
 
     public String getTimeZone() {

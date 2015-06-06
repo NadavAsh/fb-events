@@ -1,12 +1,15 @@
 package edu.washington.crew.fbevents;
 
+import android.app.Fragment;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 
 import com.facebook.FacebookSdk;
 
@@ -15,7 +18,7 @@ import java.io.IOException;
 import edu.washington.crew.fbevents.FacebookEventsApp.*;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements EventFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +30,26 @@ public class MainActivity extends ActionBarActivity {
 //        Intent loginIntent = new Intent(this, LoginActivity.class);
 //        startActivity(loginIntent);
 
+        /* Test code to get all events from repo */
+
+
+        // If repo has not been instantiated
         FbEventRepository repo = new FbEventRepository();
         try {
             repo.generateEventsFromJson(this.getResources().openRawResource(R.raw.data));
-        } catch(IOException e){
+        } catch (IOException e) {
             Toast.makeText(MainActivity.this, "Error: IO Exception", Toast.LENGTH_SHORT).show();
         }
         Log.i("MainActivity", repo.getAllEvents().toString());
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new EventFragment())
+                    .commit();
+        }
+
+
+
     }
 
     @Override
@@ -56,5 +72,9 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onFragmentInteraction(String string){
+        //you can leave it empty
     }
 }
