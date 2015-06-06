@@ -106,15 +106,15 @@ interface EventRepository {
 class FbEvent {
     // @TODO: Leverage a date object for startTime and int for ID; kept it String for parsing JSON to preserve simplicity
 
-    private String id;
-    private String coverPhotoUrl;
-    private String description;
-    private String eventName;
-    private String[] owner;
-    private String[] location;
-    private String startTime;
-    private String timeZone;
-    private String rsvpStatus;
+    public String id;
+    public String coverPhotoUrl;
+    public String description;
+    public String eventName;
+    public String[] owner;
+    public String[] location;
+    public String startTime;
+    public String timeZone;
+    public String rsvpStatus;
 
     public FbEvent(String id) {
         this.id = id;

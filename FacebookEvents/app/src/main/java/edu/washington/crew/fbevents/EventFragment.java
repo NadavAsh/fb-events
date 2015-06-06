@@ -58,8 +58,7 @@ public class EventFragment extends Fragment implements AbsListView.OnItemClickLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAdapter = new ArrayAdapter<FbEvent>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, FbEventRepository.FbEvents);
+        mAdapter = new EventAdapter(getActivity(), FbEventRepository.FbEvents);
     }
 
     @Override
@@ -100,7 +99,7 @@ public class EventFragment extends Fragment implements AbsListView.OnItemClickLi
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+            mListener.onFragmentInteraction(FbEventRepository.FbEvents.get(position).id);
         }
     }
 
