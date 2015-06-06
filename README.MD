@@ -34,6 +34,8 @@ page depending on whether the user is logged in or not.
 - As a user, I can accept, decline, or maybe the event invitation on the notifcation
 - As a user, I will have the ability to sort events by date/time and alphabetically
 - As a user, I will be notified about upcoming events within the current day.
+
 ##Information about Optional Stories:
+
 ###Google Calendar: 
 [Android Calendar Providor](http://developer.android.com/guide/topics/providers/calendar-provider.html)
