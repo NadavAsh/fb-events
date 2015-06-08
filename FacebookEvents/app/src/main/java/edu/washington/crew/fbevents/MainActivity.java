@@ -43,6 +43,8 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FbEventRepository repo = new FbEventRepository();
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(0xff3b5998));
         try {
             repo.generateEventsFromJson(this.getResources().openRawResource(R.raw.data));
         } catch (IOException e) {
