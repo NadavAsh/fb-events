@@ -26,9 +26,12 @@ import android.view.MenuItem;
 import com.facebook.*;
 import com.facebook.login.LoginManager;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends ActionBarActivity implements EventFragment.OnFragmentInteractionListener {
 
@@ -36,7 +39,6 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
 
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
-    private AccessToken accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +47,12 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
         FbEventRepository repo = new FbEventRepository();
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(0xff3b5998));
-        try {
+        /*try {
             repo.generateEventsFromJson(this.getResources().openRawResource(R.raw.data));
         } catch (IOException e) {
             Toast.makeText(MainActivity.this, "Error: IO Exception", Toast.LENGTH_SHORT).show();
         }
-        Log.i(TAG, repo.getAllEvents().toString());
+        Log.i(TAG, repo.getAllEvents().toString());*/
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -68,22 +70,11 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
             }
         };
     }
+
     @Override
     protected void onStart() {
         super.onStart();
-
-        GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-            @Override
-            public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
-                if (jsonObject != null) {
-                    Log.i(TAG, jsonObject.toString());
-                }
-            }
-        });
-        Bundle params = new Bundle();
-        params.putString("fields", "id,name,link");
-        request.setParameters(params);
-        request.executeAsync();
+        updateWithToken(AccessToken.getCurrentAccessToken());
     }
 
     @Override
@@ -117,7 +108,8 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
     }
 
     public void onFragmentInteraction(String string) {
-        //you can leave it empty
+        Intent eventDetailsIntent = new Intent(this, EventDetailsActivity.class);
+        startActivity(eventDetailsIntent);
     }
 
     @Override
@@ -131,7 +123,36 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
         if (token == null || token.isExpired()) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             startActivity(loginIntent);
+        } else {
+            fetchEventData();
         }
-        accessToken = token;
     }
+
+    private void fetchEventData() {
+        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
+                        if (jsonObject == null) {
+                            Log.e(TAG, graphResponse.getError().getErrorMessage());
+                            return;
+                        }
+                        Log.d(TAG, jsonObject.toString());
+                        FbEventRepository repo = new FbEventRepository();
+                        try {
+                            repo.generateFromJsonArray(jsonObject.getJSONObject("events").getJSONArray("data"));
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.container, new EventFragment())
+                                    .commit();
+                        } catch (JSONException e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+                    }
+                });
+        Bundle params = new Bundle();
+        params.putString("fields", "events");
+        request.setParameters(params);
+        request.executeAsync();
+    }
+
 }
