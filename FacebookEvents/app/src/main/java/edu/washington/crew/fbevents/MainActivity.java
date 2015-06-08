@@ -107,8 +107,9 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
         return super.onOptionsItemSelected(item);
     }
 
-    public void onFragmentInteraction(String string) {
+    public void onFragmentInteraction(String id) {
         Intent eventDetailsIntent = new Intent(this, EventDetailsActivity.class);
+        eventDetailsIntent.putExtra(EventDetailsFragment.EVENT_ID, id);
         startActivity(eventDetailsIntent);
     }
 

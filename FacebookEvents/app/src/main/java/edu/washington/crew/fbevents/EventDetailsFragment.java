@@ -4,70 +4,84 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link EventDetailsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
 public class EventDetailsFragment extends Fragment {
+    public static final String TAG = "EventDetailsFragment";
 
-    private OnFragmentInteractionListener mListener;
+    public static final String EVENT_ID = "edu.washington.crew.fbevents.EVENT_ID";
+    public static final String NAME = "edu.washington.crew.fbevents.NAME";
+    public static final String DESCRIPTION = "edu.washington.crew.fbevents.DESCRIPTION";
+    public static final String LOCATION = "edu.washington.crew.fbevents.LOCATION";
+    public static final String START_TIME = "edu.washington.crew.fbevents.START_TIME";
+
+    private String eventId;
+    private String name;
+    private String description;
+    private String location;
+    private String start;
+
+    public static EventDetailsFragment newInstance(FbEvent eventDetails) {
+        EventDetailsFragment fragment = new EventDetailsFragment();
+        Bundle args = new Bundle();
+        args.putString(EVENT_ID, eventDetails.getId());
+        args.putString(NAME, eventDetails.getEventName());
+        args.putString(DESCRIPTION, eventDetails.getDescription());
+        args.putString(LOCATION, eventDetails.getLocation());
+
+        try {
+            SimpleDateFormat incomingFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+            Date inDate = incomingFormat.parse(eventDetails.getStartTime());
+
+            SimpleDateFormat newFormat = new SimpleDateFormat("MMM dd, yyy hh:mm a");
+            args.putString(START_TIME, newFormat.format(inDate));
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public EventDetailsFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        eventId = args.getString(EVENT_ID);
+        name = args.getString(NAME);
+        description = args.getString(DESCRIPTION);
+        location = args.getString(LOCATION);
+        start = args.getString(START_TIME);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_event_details, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_event_details, container, false);
+        TextView nameText = (TextView)view.findViewById(R.id.event_name);
+        nameText.setText(name);
+        TextView startTimeText = (TextView)view.findViewById(R.id.event_time);
+        startTimeText.setText(start);
+        TextView descriptionText = (TextView)view.findViewById(R.id.description);
+        descriptionText.setText(description);
+        TextView locationText = (TextView)view.findViewById(R.id.event_location);
+        locationText.setText(location);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        return view;
     }
 
 }

@@ -128,7 +128,7 @@ class FbEvent {
     public String description;
     public String eventName;
     public String[] owner;
-    public String[] location;
+    public String location;
     public String startTime;
     public String endTime;
     public String timeZone;
@@ -148,6 +148,13 @@ class FbEvent {
             newEvent.setTimeZone(json.getString("timezone"));
         if (json.has("rsvp_status"))
             newEvent.setRsvpStatus(json.getString("rsvp_status"));
+
+        if (json.has("place")) {
+            JSONObject place = json.getJSONObject("place");
+            if (place.has("name"))
+                newEvent.setLocation(place.getString("name"));
+        }
+
         return newEvent;
     }
 
@@ -192,11 +199,11 @@ class FbEvent {
         this.owner = owner;
     }
 
-    public String[] getLocation() {
+    public String getLocation() {
         return location;
     }
 
-    public void setLocation(String[] location) {
+    public void setLocation(String location) {
         this.location = location;
     }
 
