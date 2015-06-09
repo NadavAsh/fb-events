@@ -47,6 +47,22 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
         FbEventRepository repo = new FbEventRepository();
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(0xff3b5998));
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    getPackageName(),
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+
         /*try {
             repo.generateEventsFromJson(this.getResources().openRawResource(R.raw.data));
         } catch (IOException e) {
