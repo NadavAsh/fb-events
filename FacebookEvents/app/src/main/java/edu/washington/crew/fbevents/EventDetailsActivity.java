@@ -31,7 +31,7 @@ public class EventDetailsActivity extends ActionBarActivity {
         eventId = intent.getStringExtra(EventDetailsFragment.EVENT_ID);
 
         updateEventDetails();
-        getAttending();
+        // getAttending();
     }
 
 
@@ -85,6 +85,7 @@ public class EventDetailsActivity extends ActionBarActivity {
         request.executeAsync();
     }
 
+    /*
     public void getAttending() {
         GraphRequest request = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(),
                 eventId + "/attending", new GraphRequest.Callback() {
@@ -109,4 +110,5 @@ public class EventDetailsActivity extends ActionBarActivity {
                 });
         request.executeAsync();
     }
+    */
 }

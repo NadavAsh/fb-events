@@ -273,7 +273,3 @@ public class FacebookEventsApp extends Application {
     }
 
 }
-
-class eventAttending {
-
-}
