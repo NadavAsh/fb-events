@@ -35,9 +35,11 @@ public class EventAdapter extends ArrayAdapter<FbEvent> {
         TextView eventName = (TextView) convertView.findViewById(R.id.event_name);
         TextView startTime = (TextView) convertView.findViewById(R.id.event_time);
         TextView location = (TextView) convertView.findViewById(R.id.event_location);
+        TextView rsvp = (TextView) convertView.findViewById(R.id.event_rsvp);
         // Populate the data into the template view using the data object
         eventName.setText(event.eventName);
         startTime.setText(event.startTime);
+        rsvp.setText(event.rsvpStatus);
         // location.setText(event.location[0]);
         // Return the completed view to render on screen
 
