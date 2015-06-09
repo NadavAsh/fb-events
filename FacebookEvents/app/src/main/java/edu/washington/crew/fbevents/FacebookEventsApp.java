@@ -159,6 +159,12 @@ class FbEvent {
                 newEvent.setLocation(place.getString("name"));
         }
 
+        if (json.has("cover")) {
+            JSONObject cover = json.getJSONObject("cover");
+            if (cover.has("source"))
+                newEvent.setCoverPhotoUrl(cover.getString("source"));
+        }
+
         return newEvent;
     }
 

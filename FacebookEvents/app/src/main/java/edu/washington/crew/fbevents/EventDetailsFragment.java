@@ -1,6 +1,11 @@
 package edu.washington.crew.fbevents;
 
 import android.app.Activity;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.content.Intent;
+
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -11,6 +16,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.InputStream;
+import java.net.URL;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -46,19 +67,29 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
     public static final String DESCRIPTION = "edu.washington.crew.fbevents.DESCRIPTION";
     public static final String LOCATION = "edu.washington.crew.fbevents.LOCATION";
     public static final String START_TIME = "edu.washington.crew.fbevents.START_TIME";
+
+    public static final String COVER_PHOTO = "edu.washington.crew.fbevents.COVER_PHOTO";
+
+
+
     public static final String RSVP_STATUS = "edu.washington.crew.fmevents.RSVP_STATUS";
 
     private CallbackManager callbackManager;
+
 
     private String eventId;
     private String name;
     private String description;
     private String location;
     private String start;
+
+
+    private String coverPhoto;
+
+
     private String rsvpStatus;
 
     private boolean init;
-
     public static EventDetailsFragment newInstance(FbEvent eventDetails) {
         EventDetailsFragment fragment = new EventDetailsFragment();
         Bundle args = new Bundle();
@@ -66,6 +97,8 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         args.putString(NAME, eventDetails.getEventName());
         args.putString(DESCRIPTION, eventDetails.getDescription());
         args.putString(LOCATION, eventDetails.getLocation());
+        Log.d("cover_photo", eventDetails.getCoverPhotoUrl());
+        args.putString(COVER_PHOTO, eventDetails.getCoverPhotoUrl());
 
         try {
             SimpleDateFormat incomingFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -103,6 +136,10 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         description = args.getString(DESCRIPTION);
         location = args.getString(LOCATION);
         start = args.getString(START_TIME);
+
+        coverPhoto = args.getString(COVER_PHOTO);
+        Log.d("cover_photo", coverPhoto);
+
         rsvpStatus = args.getString(RSVP_STATUS);
         callbackManager = CallbackManager.Factory.create();
     }
@@ -121,6 +158,26 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         final TextView locationText = (TextView)view.findViewById(R.id.event_location);
         locationText.setText(location);
 
+        final ImageView cover = (ImageView)view.findViewById(R.id.ivUserIcon);
+        new Thread(new Runnable() {
+            private Bitmap loadImageFromNetwork(String url){
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(url).getContent());
+                    return bitmap;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+            public void run(){
+                final Bitmap bitmap = loadImageFromNetwork(coverPhoto);
+                cover.post(new Runnable(){
+                    public void run(){
+                        cover.setImageBitmap(bitmap);
+                    }
+                });
+            }
+        }).start();
         RadioGroup radioGroup = (RadioGroup)view.findViewById(R.id.rsvp_radio_group);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -197,6 +254,5 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
                 });
         request.executeAsync();
     }
-
 
 }
