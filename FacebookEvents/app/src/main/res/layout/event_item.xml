@@ -40,7 +40,14 @@
             android:text="Jan 1, 2015 at 12:00 pm"
             android:textColor="#333333"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-        
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="RSVP"
+            android:id="@+id/event_rsvp" />
+
     </LinearLayout>
 
 </LinearLayout>
