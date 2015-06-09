@@ -14,10 +14,14 @@ import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +33,7 @@ import edu.washington.crew.fbevents.R;
 
 public class EventDetailsActivity extends ActionBarActivity {
     LoginManager loginManager;
+    private CallbackManager callbackManager;
 
     public static final String TAG = "EventDetailsActivity";
 
@@ -42,6 +47,7 @@ public class EventDetailsActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
+        callbackManager = CallbackManager.Factory.create();
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(0xff3b5998));
@@ -60,36 +66,53 @@ public class EventDetailsActivity extends ActionBarActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText postText = (EditText) findViewById(R.id.posts_content);
-                postContent = postText.getText().toString();
 
-                if (postContent != null && !postContent.isEmpty()) {
-                    Log.i("PERMISSIONS", AccessToken.getCurrentAccessToken().getPermissions().toString());
-                    if (!AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")) {
-                        loginManager = LoginManager.getInstance();
-                        Collection<String> permissions = Arrays.asList("publish_actions");
-                        loginManager.logInWithPublishPermissions(EventDetailsActivity.this, permissions);
-                    }
+                if (!AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")) {
+                    loginManager = LoginManager.getInstance();
+                    loginManager.logInWithPublishPermissions(EventDetailsActivity.this, Arrays.asList("publish_actions"));
 
-                    Bundle parameters = new Bundle();
-                    parameters.putString("message", postContent);
-                    GraphRequest request = new GraphRequest(
-                            AccessToken.getCurrentAccessToken(),
-                            eventId + "/feed",
-                            parameters,
-                            HttpMethod.POST);
-                    request.executeAsync();
-
-                    postText.setText("");
-                    Toast.makeText(EventDetailsActivity.this, "Event message posted!", Toast.LENGTH_SHORT).show();
+                    loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                        @Override
+                        public void onSuccess(LoginResult loginResult) {
+                            publishPost();
+                        }
+                        @Override
+                        public void onCancel() {
+                            Log.d(TAG, "Login cancelled.");
+                        }
+                        @Override
+                        public void onError(FacebookException e) {
+                            Log.e(TAG, "Login failed.");
+                        }
+                    });
                 } else {
-                    Toast.makeText(EventDetailsActivity.this, "Message can't be blank.", Toast.LENGTH_SHORT).show();
+                    publishPost();
                 }
             }
         });
 
     }
 
+    public void publishPost() {
+        EditText postText = (EditText) findViewById(R.id.posts_content);
+        postContent = postText.getText().toString();
+
+        if (postContent != null && !postContent.isEmpty()) {
+            Bundle parameters = new Bundle();
+            parameters.putString("message", postContent);
+            GraphRequest request = new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    eventId + "/feed",
+                    parameters,
+                    HttpMethod.POST);
+            request.executeAsync();
+
+            postText.setText("");
+            Toast.makeText(EventDetailsActivity.this, "Event message posted!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(EventDetailsActivity.this, "Message can't be blank.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,6 +139,12 @@ public class EventDetailsActivity extends ActionBarActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void updateEventDetails() {
