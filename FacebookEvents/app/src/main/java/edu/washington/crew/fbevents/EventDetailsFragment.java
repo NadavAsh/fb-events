@@ -13,18 +13,11 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.*;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -36,27 +29,17 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
+import com.facebook.*;
+import com.facebook.login.*;
 
 import java.lang.reflect.Array;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.*;
 
 import com.facebook.*;
 
+import java.text.*;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 
 public class EventDetailsFragment extends android.support.v4.app.Fragment {
@@ -83,13 +66,12 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
     private String location;
     private String start;
 
-
     private String coverPhoto;
-
 
     private String rsvpStatus;
 
     private boolean init;
+
     public static EventDetailsFragment newInstance(FbEvent eventDetails) {
         EventDetailsFragment fragment = new EventDetailsFragment();
         Bundle args = new Bundle();
@@ -98,16 +80,7 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         args.putString(DESCRIPTION, eventDetails.getDescription());
         args.putString(LOCATION, eventDetails.getLocation());
         args.putString(COVER_PHOTO, eventDetails.getCoverPhotoUrl());
-
-        try {
-            SimpleDateFormat incomingFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-            Date inDate = incomingFormat.parse(eventDetails.getStartTime());
-
-            SimpleDateFormat newFormat = new SimpleDateFormat("MMM dd, yyy hh:mm a");
-            args.putString(START_TIME, newFormat.format(inDate));
-        } catch (ParseException e) {
-            Log.e(TAG, e.getMessage());
-        }
+        args.putString(START_TIME, eventDetails.getStartTime());
 
         for (FbEvent event : FbEventRepository.FbEvents) {
             if (event.getId().equals(eventDetails.getId())) {
