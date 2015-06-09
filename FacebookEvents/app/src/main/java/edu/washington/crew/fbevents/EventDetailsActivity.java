@@ -6,21 +6,36 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import edu.washington.crew.fbevents.R;
 
 public class EventDetailsActivity extends ActionBarActivity {
+    LoginManager loginManager;
+
     public static final String TAG = "EventDetailsActivity";
 
     private FbEvent eventModel;
     private String eventId;
+    private String postContent;
+
+    private AccessTokenTracker accessTokenTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +46,39 @@ public class EventDetailsActivity extends ActionBarActivity {
         eventId = intent.getStringExtra(EventDetailsFragment.EVENT_ID);
 
         updateEventDetails();
+
+
+        Button submitButton = (Button) findViewById(R.id.posts_button);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText postText = (EditText) findViewById(R.id.posts_content);
+                postContent = postText.getText().toString();
+
+                if (postContent != null && !postContent.isEmpty()) {
+                    Log.i("PERMISSIONS", AccessToken.getCurrentAccessToken().getPermissions().toString());
+//                    if (!AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")) {
+//                        loginManager = LoginManager.getInstance();
+//                        Collection<String> permissions = Arrays.asList("publish_actions");
+//                        loginManager.logInWithPublishPermissions(EventDetailsActivity.this, permissions);
+//                    }
+
+                    Bundle parameters = new Bundle();
+                    parameters.putString("message", postContent);
+                    GraphRequest request = new GraphRequest(
+                            AccessToken.getCurrentAccessToken(),
+                            eventId + "/feed",
+                            parameters,
+                            HttpMethod.POST);
+                    request.executeAsync();
+
+                    postText.setText("");
+                    Toast.makeText(EventDetailsActivity.this, "Event message posted!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(EventDetailsActivity.this, "Message can't be blank.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 
