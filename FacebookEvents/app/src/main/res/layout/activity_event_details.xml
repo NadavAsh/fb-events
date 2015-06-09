@@ -38,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="Event Title"
                 android:textColor="#3b5998"
+                android:textSize="45px"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
@@ -46,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:text="Jan 1, 2015 at 12:00 pm"
                 android:textColor="#333333"
+                android:textSize="30px"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
 
@@ -55,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:text="Event Location"
                 android:textColor="#999999"
+                android:textSize="30px"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </LinearLayout>
@@ -69,6 +72,7 @@
         android:paddingTop="20dp"
         android:text="Description"
         android:textColor="#666666"
+        android:textSize="30px"
         android:textAppearance="?android:attr/textAppearanceListItem" />
 
     <TextView
@@ -77,6 +81,7 @@
         android:layout_height="wrap_content"
         android:text="This is an awesome event"
         android:textColor="#999999"
+        android:textSize="30px"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -86,6 +91,7 @@
         android:paddingTop="20dp"
         android:text="Wall Posts"
         android:textColor="#666666"
+        android:textSize="30px"
         android:textAppearance="?android:attr/textAppearanceListItem" />
 
     <EditText
@@ -97,6 +103,7 @@
         android:id="@+id/posts_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="30px"
         android:text="Submit Post"/>
 
 </LinearLayout>

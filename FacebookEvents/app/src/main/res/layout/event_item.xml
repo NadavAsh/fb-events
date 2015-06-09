@@ -2,12 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:divider="#f7f7f7"
+    android:dividerHeight="10dp" >
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingTop="5dp">
 
         <ImageView
             android:layout_alignParentLeft="true"
@@ -23,13 +27,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:fontFamily="lucida grande"
-        android:paddingBottom="10dp">
+        android:paddingBottom="10dp"
+        android:paddingTop="5dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp">
 
         <TextView
             android:id="@+id/event_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Event Title"
+            android:textSize="50px"
             android:textColor="#3b5998"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -39,6 +47,7 @@
             android:layout_height="wrap_content"
             android:text="Jan 1, 2015 at 12:00 pm"
             android:textColor="#333333"
+            android:textSize="35px"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
@@ -46,6 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Event Location"
+            android:textSize="35px"
             android:textColor="#999999"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
