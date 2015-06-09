@@ -57,11 +57,11 @@ public class EventDetailsActivity extends ActionBarActivity {
 
                 if (postContent != null && !postContent.isEmpty()) {
                     Log.i("PERMISSIONS", AccessToken.getCurrentAccessToken().getPermissions().toString());
-//                    if (!AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")) {
-//                        loginManager = LoginManager.getInstance();
-//                        Collection<String> permissions = Arrays.asList("publish_actions");
-//                        loginManager.logInWithPublishPermissions(EventDetailsActivity.this, permissions);
-//                    }
+                    if (!AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")) {
+                        loginManager = LoginManager.getInstance();
+                        Collection<String> permissions = Arrays.asList("publish_actions");
+                        loginManager.logInWithPublishPermissions(EventDetailsActivity.this, permissions);
+                    }
 
                     Bundle parameters = new Bundle();
                     parameters.putString("message", postContent);
