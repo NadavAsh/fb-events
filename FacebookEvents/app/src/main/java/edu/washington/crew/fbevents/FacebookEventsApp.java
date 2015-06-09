@@ -9,6 +9,10 @@ import android.app.usage.UsageEvents;
 import android.util.JsonReader;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,6 +24,8 @@ import java.util.Date;
  */
 
 class FbEventRepository implements EventRepository {
+    public static final String TAG = "FbEventRepository";
+
     public static ArrayList<FbEvent> FbEvents;
 
     public FbEventRepository () {
@@ -93,6 +99,17 @@ class FbEventRepository implements EventRepository {
         }
     }
 
+    public void generateFromJsonArray(JSONArray events) {
+        for (int i = 0; i < events.length(); ++i) {
+            try {
+                JSONObject eventObject = events.getJSONObject(i);
+                FbEvents.add(FbEvent.fromJson(eventObject));
+            } catch (JSONException e) {
+                Log.d(TAG, e.getMessage());
+            }
+        }
+    }
+
 }
 
 interface EventRepository {
@@ -111,10 +128,35 @@ class FbEvent {
     public String description;
     public String eventName;
     public String[] owner;
-    public String[] location;
+    public String location;
     public String startTime;
+    public String endTime;
     public String timeZone;
     public String rsvpStatus;
+
+    public static FbEvent fromJson(JSONObject json) throws JSONException {
+        FbEvent newEvent = new FbEvent(json.getString("id"));
+        if (json.has("description"))
+            newEvent.setDescription(json.getString("description"));
+        if (json.has("name"))
+            newEvent.setEventName(json.getString("name"));
+        if (json.has("cover_photo_url"))
+            newEvent.setCoverPhotoUrl(json.getString("cover_photo_url"));
+        if (json.has("start_time"))
+            newEvent.setStartTime(json.getString("start_time"));
+        if (json.has("timezone"))
+            newEvent.setTimeZone(json.getString("timezone"));
+        if (json.has("rsvp_status"))
+            newEvent.setRsvpStatus(json.getString("rsvp_status"));
+
+        if (json.has("place")) {
+            JSONObject place = json.getJSONObject("place");
+            if (place.has("name"))
+                newEvent.setLocation(place.getString("name"));
+        }
+
+        return newEvent;
+    }
 
     public FbEvent(String id) {
         this.id = id;
@@ -157,11 +199,11 @@ class FbEvent {
         this.owner = owner;
     }
 
-    public String[] getLocation() {
+    public String getLocation() {
         return location;
     }
 
-    public void setLocation(String[] location) {
+    public void setLocation(String location) {
         this.location = location;
     }
 
@@ -171,6 +213,14 @@ class FbEvent {
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     public String getId() {
@@ -192,6 +242,14 @@ class FbEvent {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getRsvpStatus() {
+        return rsvpStatus;
+    }
+
+    public void setRsvpStatus(String rsvp) {
+        rsvpStatus = rsvp;
+    }
 }
 
 public class FacebookEventsApp extends Application {
@@ -200,7 +258,7 @@ public class FacebookEventsApp extends Application {
     public static FacebookEventsApp instance = null;
 
     /* Protection at runtime */
-    public FacebookEventsApp () {
+    public FacebookEventsApp() {
         if (instance == null) {
             instance = this;
         } else {
