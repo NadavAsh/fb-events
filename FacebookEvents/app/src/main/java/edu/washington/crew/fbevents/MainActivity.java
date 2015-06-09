@@ -75,8 +75,9 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
                     .add(R.id.container, new EventFragment())
                     .commit();
         }
-
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        if (!FacebookSdk.isInitialized()) {
+            FacebookSdk.sdkInitialize(getApplicationContext());
+        }
         callbackManager = CallbackManager.Factory.create();
 
         accessTokenTracker = new AccessTokenTracker() {

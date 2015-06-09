@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
+import com.facebook.*;
 /**
  * Created by Chris on 6/8/15.
  */
@@ -15,7 +15,7 @@ public class SplashActivity  extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
+        FacebookSdk.sdkInitialize(getApplicationContext());
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
