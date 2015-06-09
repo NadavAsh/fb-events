@@ -119,6 +119,8 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
             return true;
         } else if (id == R.id.action_logout) {
             LoginManager.getInstance().logOut();
+        } else if (id == R.id.action_refresh) {
+            fetchEventData();
         }
 
         return super.onOptionsItemSelected(item);
@@ -153,10 +155,12 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
     }
 
     private void fetchEventData() {
-        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
-                new GraphRequest.GraphJSONObjectCallback() {
+        GraphRequest request = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(),
+                "me/events",
+                new GraphRequest.Callback() {
                     @Override
-                    public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
+                    public void onCompleted(GraphResponse graphResponse) {
+                        JSONObject jsonObject = graphResponse.getJSONObject();
                         if (jsonObject == null) {
                             Log.e(TAG, graphResponse.getError().getErrorMessage());
                             return;
@@ -164,7 +168,7 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
                         Log.d(TAG, jsonObject.toString());
                         FbEventRepository repo = new FbEventRepository();
                         try {
-                            repo.generateFromJsonArray(jsonObject.getJSONObject("events").getJSONArray("data"));
+                            repo.generateFromJsonArray(jsonObject.getJSONArray("data"));
                             getSupportFragmentManager().beginTransaction()
                                     .replace(R.id.container, new EventFragment())
                                     .commit();
@@ -174,7 +178,7 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
                     }
                 });
         Bundle params = new Bundle();
-        params.putString("fields", "events");
+        params.putString("fields", "start_time,end_time,name,timezone,rsvp_status,cover");
         request.setParameters(params);
         request.executeAsync();
     }
