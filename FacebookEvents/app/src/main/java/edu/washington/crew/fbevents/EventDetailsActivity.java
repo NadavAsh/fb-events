@@ -1,6 +1,7 @@
 package edu.washington.crew.fbevents;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,6 +42,9 @@ public class EventDetailsActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(0xff3b5998));
 
         Intent intent = getIntent();
         eventId = intent.getStringExtra(EventDetailsFragment.EVENT_ID);
