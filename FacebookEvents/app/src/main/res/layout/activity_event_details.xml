@@ -32,7 +32,7 @@
                 android:textColor="#666666"
                 android:textAppearance="?android:attr/textAppearanceListItem" />
 
-            <!--<EditText
+            <EditText
                 android:id="@+id/posts_content"
                 android:layout_width="match_parent"
                 android:layout_height="75dp" />
@@ -41,7 +41,7 @@
                 android:id="@+id/posts_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Submit Post"/>-->
+                android:text="Submit Post"/>
         </LinearLayout>
 
     </ScrollView>

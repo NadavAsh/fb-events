@@ -23,6 +23,12 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
 import java.lang.reflect.Array;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.facebook.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -96,7 +102,6 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         location = args.getString(LOCATION);
         start = args.getString(START_TIME);
         rsvpStatus = args.getString(RSVP_STATUS);
-
         callbackManager = CallbackManager.Factory.create();
     }
 
