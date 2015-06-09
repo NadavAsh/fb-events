@@ -31,6 +31,7 @@ public class EventDetailsActivity extends ActionBarActivity {
         eventId = intent.getStringExtra(EventDetailsFragment.EVENT_ID);
 
         updateEventDetails();
+        getAttending();
     }
 
 
@@ -79,8 +80,33 @@ public class EventDetailsActivity extends ActionBarActivity {
                     }
                 });
         Bundle bundle = new Bundle();
-        bundle.putString("fields", "id,name,description,start_time,end_time,place");
+        bundle.putString("fields", "id,name,description,start_time,end_time,place,cover");
         request.setParameters(bundle);
+        request.executeAsync();
+    }
+
+    public void getAttending() {
+        GraphRequest request = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(),
+                eventId + "/attending", new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse graphResponse) {
+                        if (graphResponse.getError() != null) {
+                            Log.e(TAG, graphResponse.getError().getErrorMessage());
+                            return;
+                        }
+                        try {
+                            eventModel = FbEvent.fromJson(graphResponse.getJSONObject());
+
+                            EventDetailsFragment eventDetails =
+                                    EventDetailsFragment.newInstance(eventModel);
+                            getFragmentManager().beginTransaction()
+                                    .replace(R.id.container, eventDetails)
+                                    .commit();
+                        } catch (JSONException e) {
+                            Log.e(TAG, "Failed to parse event JSON: " + e.getMessage());
+                        }
+                    }
+                });
         request.executeAsync();
     }
 }

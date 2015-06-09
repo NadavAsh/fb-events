@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -23,12 +24,14 @@ public class EventDetailsFragment extends Fragment {
     public static final String DESCRIPTION = "edu.washington.crew.fbevents.DESCRIPTION";
     public static final String LOCATION = "edu.washington.crew.fbevents.LOCATION";
     public static final String START_TIME = "edu.washington.crew.fbevents.START_TIME";
+    public static final String COVER_PHOTO = "edu.washington.crew.fbevents.COVER_PHOTO";
 
     private String eventId;
     private String name;
     private String description;
     private String location;
     private String start;
+    private String coverPhoto;
 
     public static EventDetailsFragment newInstance(FbEvent eventDetails) {
         EventDetailsFragment fragment = new EventDetailsFragment();
@@ -37,6 +40,7 @@ public class EventDetailsFragment extends Fragment {
         args.putString(NAME, eventDetails.getEventName());
         args.putString(DESCRIPTION, eventDetails.getDescription());
         args.putString(LOCATION, eventDetails.getLocation());
+        args.putString(COVER_PHOTO, eventDetails.coverPhotoUrl);
 
         try {
             SimpleDateFormat incomingFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -65,6 +69,7 @@ public class EventDetailsFragment extends Fragment {
         description = args.getString(DESCRIPTION);
         location = args.getString(LOCATION);
         start = args.getString(START_TIME);
+        coverPhoto = args.getString(COVER_PHOTO);
     }
 
     @Override
@@ -80,6 +85,9 @@ public class EventDetailsFragment extends Fragment {
         descriptionText.setText(description);
         TextView locationText = (TextView)view.findViewById(R.id.event_location);
         locationText.setText(location);
+
+        ImageView cover = (ImageView)view.findViewById(R.id.cover_photo);
+        cover.setImageURI(Uri.parse(coverPhoto));
 
         return view;
     }

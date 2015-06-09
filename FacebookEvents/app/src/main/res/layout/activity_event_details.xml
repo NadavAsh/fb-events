@@ -8,6 +8,10 @@
     android:fontFamily="lucida grande"
     tools:context="edu.washington.crew.fbevents.EventDetailsActivity">
 
+    <ImageView
+        android:id="@+id/cover_photo"
+        android:layout_width="match_parent"
+        android:layout_height="75dp" />
 
     <FrameLayout
         android:id="@+id/container"
