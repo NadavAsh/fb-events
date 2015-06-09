@@ -99,7 +99,7 @@ public class EventDetailsFragment extends Fragment {
         TextView locationText = (TextView)view.findViewById(R.id.event_location);
         locationText.setText(location);
 
-        final ImageView cover = (ImageView)view.findViewById(R.id.cover_photo);
+        final ImageView cover = (ImageView)view.findViewById(R.id.ivUserIcon);
         new Thread(new Runnable() {
             private Bitmap loadImageFromNetwork(String url){
                 try {
