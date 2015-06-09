@@ -16,6 +16,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -147,7 +152,9 @@ class FbEvent {
         if (json.has("cover_photo_url"))
             newEvent.setCoverPhotoUrl(json.getString("cover_photo_url"));
         if (json.has("start_time"))
-            newEvent.setStartTime(json.getString("start_time"));
+            newEvent.setStartTime(formatDate(json.getString("start_time")));
+        if (json.has("end_time"))
+            newEvent.setStartTime(formatDate(json.getString("end_time")));
         if (json.has("timezone"))
             newEvent.setTimeZone(json.getString("timezone"));
         if (json.has("rsvp_status"))
@@ -166,6 +173,35 @@ class FbEvent {
         }
 
         return newEvent;
+    }
+
+    public static String formatDate(String date) {
+        try {
+            Log.d("FbEvent", date);
+            DateFormat df = new DateFormat() {
+                static final String FORMAT1 = "yyyy-MM-dd'T'HH:mm:ssZ";
+                static final String FORMAT2 = "yyyy-MM-dd";
+                final SimpleDateFormat sdf1 = new SimpleDateFormat(FORMAT1);
+                final SimpleDateFormat sdf2 = new SimpleDateFormat(FORMAT2);
+                @Override
+                public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition) {
+                    throw new UnsupportedOperationException();
+                }
+
+                @Override
+                public Date parse(String source, ParsePosition pos) {
+                    if (source.length() - pos.getIndex() > FORMAT2.length())
+                        return sdf1.parse(source, pos);
+                    return sdf2.parse(source, pos);
+                }
+            };
+            Date inDate = df.parse(date);
+
+            SimpleDateFormat newFormat = new SimpleDateFormat("MMM dd, yyy HH:mm a");
+            return newFormat.format(inDate);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
     public FbEvent(String id) {
