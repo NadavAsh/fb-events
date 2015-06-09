@@ -122,6 +122,10 @@ interface EventRepository {
 
 class FbEvent {
     // @TODO: Leverage a date object for startTime and int for ID; kept it String for parsing JSON to preserve simplicity
+    public static final String RSVP_ATTENDING = "attending";
+    public static final String RSVP_MAYBE = "unsure";
+    public static final String RSVP_DECLINE = "declined";
+    public static final String RSVP_NOT_REPLIED = "not_replied";
 
     public String id;
     public String coverPhotoUrl;

@@ -136,6 +136,12 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
     private void updateWithToken(AccessToken token) {
         Log.i(TAG, "Updating with token " + token);
         if (token == null || token.isExpired()) {
