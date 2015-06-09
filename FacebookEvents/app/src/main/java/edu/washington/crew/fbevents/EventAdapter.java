@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,7 +24,7 @@ public class EventAdapter extends ArrayAdapter<FbEvent> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
         final FbEvent event = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
@@ -42,7 +43,6 @@ public class EventAdapter extends ArrayAdapter<FbEvent> {
 
         ImageView cover = (ImageView)convertView.findViewById(R.id.ivUserIcon);
         Picasso.with(getContext()).load(event.getCoverPhotoUrl()).into(cover);
-
 
         return convertView;
     }
