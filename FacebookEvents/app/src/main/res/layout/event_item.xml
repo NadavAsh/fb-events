@@ -58,7 +58,6 @@
             android:textSize="35px"
             android:textColor="#999999"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-
     </LinearLayout>
 
 </LinearLayout>
