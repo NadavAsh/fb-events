@@ -45,8 +45,8 @@ public class EventDetailsActivity extends ActionBarActivity {
         Intent intent = getIntent();
         eventId = intent.getStringExtra(EventDetailsFragment.EVENT_ID);
 
-        updateEventDetails();
-
+        if (savedInstanceState == null)
+            updateEventDetails();
 
         Button submitButton = (Button) findViewById(R.id.posts_button);
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -57,11 +57,11 @@ public class EventDetailsActivity extends ActionBarActivity {
 
                 if (postContent != null && !postContent.isEmpty()) {
                     Log.i("PERMISSIONS", AccessToken.getCurrentAccessToken().getPermissions().toString());
-//                    if (!AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")) {
-//                        loginManager = LoginManager.getInstance();
-//                        Collection<String> permissions = Arrays.asList("publish_actions");
-//                        loginManager.logInWithPublishPermissions(EventDetailsActivity.this, permissions);
-//                    }
+                    if (!AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")) {
+                        loginManager = LoginManager.getInstance();
+                        Collection<String> permissions = Arrays.asList("publish_actions");
+                        loginManager.logInWithPublishPermissions(EventDetailsActivity.this, permissions);
+                    }
 
                     Bundle parameters = new Bundle();
                     parameters.putString("message", postContent);
@@ -104,6 +104,11 @@ public class EventDetailsActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
     private void updateEventDetails() {
         GraphRequest request = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(),
                 eventId, new GraphRequest.Callback() {
@@ -118,7 +123,8 @@ public class EventDetailsActivity extends ActionBarActivity {
 
                             EventDetailsFragment eventDetails =
                                     EventDetailsFragment.newInstance(eventModel);
-                            getFragmentManager().beginTransaction()
+                            getSupportFragmentManager().beginTransaction()
+                                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                                     .replace(R.id.container, eventDetails)
                                     .commit();
                         } catch (JSONException e) {
