@@ -75,8 +75,9 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
                     .add(R.id.container, new EventFragment())
                     .commit();
         }
-
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        if (!FacebookSdk.isInitialized()) {
+            FacebookSdk.sdkInitialize(getApplicationContext());
+        }
         callbackManager = CallbackManager.Factory.create();
 
         accessTokenTracker = new AccessTokenTracker() {
@@ -133,6 +134,12 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     private void updateWithToken(AccessToken token) {
