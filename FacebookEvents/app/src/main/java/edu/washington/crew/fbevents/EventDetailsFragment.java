@@ -148,6 +148,7 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
                             cover.setImageBitmap(bitmap);
                         }
                     });
+
                 } catch (Exception e) {
                     Log.d("Image", "There is no photo for this event");
                     e.printStackTrace();
