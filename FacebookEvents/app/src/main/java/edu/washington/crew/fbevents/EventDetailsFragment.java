@@ -97,7 +97,6 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         args.putString(NAME, eventDetails.getEventName());
         args.putString(DESCRIPTION, eventDetails.getDescription());
         args.putString(LOCATION, eventDetails.getLocation());
-        Log.d("cover_photo", eventDetails.getCoverPhotoUrl());
         args.putString(COVER_PHOTO, eventDetails.getCoverPhotoUrl());
 
         try {
@@ -138,7 +137,6 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         start = args.getString(START_TIME);
 
         coverPhoto = args.getString(COVER_PHOTO);
-        Log.d("cover_photo", coverPhoto);
 
         rsvpStatus = args.getString(RSVP_STATUS);
         callbackManager = CallbackManager.Factory.create();
@@ -170,14 +168,21 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
                 return null;
             }
             public void run(){
-                final Bitmap bitmap = loadImageFromNetwork(coverPhoto);
-                cover.post(new Runnable(){
-                    public void run(){
-                        cover.setImageBitmap(bitmap);
-                    }
-                });
+                try {
+                    final Bitmap bitmap = loadImageFromNetwork(coverPhoto);
+                    cover.post(new Runnable() {
+                        public void run() {
+                            cover.setImageBitmap(bitmap);
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.d("Image", "There is no photo for this event");
+                    e.printStackTrace();
+                }
             }
         }).start();
+
+        
         RadioGroup radioGroup = (RadioGroup)view.findViewById(R.id.rsvp_radio_group);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
