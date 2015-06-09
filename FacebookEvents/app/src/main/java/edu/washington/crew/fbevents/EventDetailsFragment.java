@@ -1,12 +1,17 @@
 package edu.washington.crew.fbevents;
 
 import android.app.Activity;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.content.Intent;
+
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +28,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.InputStream;
 import java.net.URL;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -58,27 +67,29 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
     public static final String DESCRIPTION = "edu.washington.crew.fbevents.DESCRIPTION";
     public static final String LOCATION = "edu.washington.crew.fbevents.LOCATION";
     public static final String START_TIME = "edu.washington.crew.fbevents.START_TIME";
-<<<<<<< HEAD
+
     public static final String COVER_PHOTO = "edu.washington.crew.fbevents.COVER_PHOTO";
-=======
+
+
+
     public static final String RSVP_STATUS = "edu.washington.crew.fmevents.RSVP_STATUS";
 
     private CallbackManager callbackManager;
->>>>>>> 1bbfb986442289346dce465c018c49b27340837b
+
 
     private String eventId;
     private String name;
     private String description;
     private String location;
     private String start;
-<<<<<<< HEAD
+
+
     private String coverPhoto;
-=======
+
+
     private String rsvpStatus;
 
     private boolean init;
->>>>>>> 1bbfb986442289346dce465c018c49b27340837b
-
     public static EventDetailsFragment newInstance(FbEvent eventDetails) {
         EventDetailsFragment fragment = new EventDetailsFragment();
         Bundle args = new Bundle();
@@ -125,13 +136,12 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         description = args.getString(DESCRIPTION);
         location = args.getString(LOCATION);
         start = args.getString(START_TIME);
-<<<<<<< HEAD
+
         coverPhoto = args.getString(COVER_PHOTO);
         Log.d("cover_photo", coverPhoto);
-=======
+
         rsvpStatus = args.getString(RSVP_STATUS);
         callbackManager = CallbackManager.Factory.create();
->>>>>>> 1bbfb986442289346dce465c018c49b27340837b
     }
 
     @Override
@@ -148,12 +158,7 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         final TextView locationText = (TextView)view.findViewById(R.id.event_location);
         locationText.setText(location);
 
-<<<<<<< Updated upstream
         final ImageView cover = (ImageView)view.findViewById(R.id.ivUserIcon);
-=======
-<<<<<<< HEAD
-        final ImageView cover = (ImageView)view.findViewById(R.id.cover_photo);
->>>>>>> Stashed changes
         new Thread(new Runnable() {
             private Bitmap loadImageFromNetwork(String url){
                 try {
@@ -173,7 +178,6 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
                 });
             }
         }).start();
-=======
         RadioGroup radioGroup = (RadioGroup)view.findViewById(R.id.rsvp_radio_group);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -230,7 +234,6 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         }
 
         init = true;
->>>>>>> 1bbfb986442289346dce465c018c49b27340837b
 
         return view;
     }
