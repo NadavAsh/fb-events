@@ -1,7 +1,9 @@
 package edu.washington.crew.fbevents;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
@@ -26,8 +28,10 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import edu.washington.crew.fbevents.R;
 
@@ -39,6 +43,7 @@ public class EventDetailsActivity extends ActionBarActivity {
     private FbEvent eventModel;
     private String eventId;
     private String postContent;
+    private List<String> attending;
 
     private AccessTokenTracker accessTokenTracker;
 
@@ -47,15 +52,14 @@ public class EventDetailsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
+        attending = new ArrayList<String>();
+
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(0xff3b5998));
 
         Intent intent = getIntent();
         eventId = intent.getStringExtra(EventDetailsFragment.EVENT_ID);
 
-
-        updateEventDetails();
-        // getAttending();
 
         if (savedInstanceState == null) {
             updateEventDetails();
@@ -165,8 +169,46 @@ public class EventDetailsActivity extends ActionBarActivity {
                         try {
                             JSONObject object = graphResponse.getJSONObject();
                             JSONArray attendees = object.getJSONArray("data");
-                            Button attendingB = (Button) findViewById(R.id.attending);
+                            final Button attendingB = (Button) findViewById(R.id.attending);
                             attendingB.setText(attendingB.getText().toString() + "" + attendees.length());
+                            /*
+                            for (int i = 0; i < attendees.length(); i++) {
+                                try {
+                                    JSONObject attendee = attendees.getJSONObject(i);
+                                    attending.add(attendee.getString("name"));
+                                } catch (JSONException e){
+                                    Log.d(TAG, e.getMessage());
+                                }
+                            }
+                            attendingB.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    final AlertDialog show = new AlertDialog.Builder(EventDetailsActivity.this).create();
+                                    show.setTitle("Attending");
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            String message = "";
+                                            for (int i = 0; i < attending.size(); i++) {
+                                                message += attending.get(i) + "\n";
+                                            }
+                                            final String messageF = message;
+                                            attendingB.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Log.d(TAG, messageF);
+                                                    show.setMessage(messageF);
+                                                }
+                                            });
+                                        }
+                                    });
+                                    show.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new Message());
+                                    show.show();
+                                }
+
+                            });
+                            */
+
 
                         } catch (JSONException e) {
                             Log.e(TAG, "Failed to parse event JSON: " + e.getMessage());
