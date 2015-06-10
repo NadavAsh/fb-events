@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,9 +20,12 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -53,8 +57,10 @@ public class EventDetailsActivity extends ActionBarActivity {
         updateEventDetails();
         // getAttending();
 
-        if (savedInstanceState == null)
+        if (savedInstanceState == null) {
             updateEventDetails();
+            getAttending();
+        }
 
         Button submitButton = (Button) findViewById(R.id.posts_button);
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +153,6 @@ public class EventDetailsActivity extends ActionBarActivity {
         request.executeAsync();
     }
 
-    /*
     public void getAttending() {
         GraphRequest request = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(),
                 eventId + "/attending", new GraphRequest.Callback() {
@@ -158,13 +163,11 @@ public class EventDetailsActivity extends ActionBarActivity {
                             return;
                         }
                         try {
-                            eventModel = FbEvent.fromJson(graphResponse.getJSONObject());
+                            JSONObject object = graphResponse.getJSONObject();
+                            JSONArray attendees = object.getJSONArray("data");
+                            Button attendingB = (Button) findViewById(R.id.attending);
+                            attendingB.setText(attendingB.getText().toString() + "" + attendees.length());
 
-                            EventDetailsFragment eventDetails =
-                                    EventDetailsFragment.newInstance(eventModel);
-                            getFragmentManager().beginTransaction()
-                                    .replace(R.id.container, eventDetails)
-                                    .commit();
                         } catch (JSONException e) {
                             Log.e(TAG, "Failed to parse event JSON: " + e.getMessage());
                         }
@@ -172,5 +175,4 @@ public class EventDetailsActivity extends ActionBarActivity {
                 });
         request.executeAsync();
     }
-    */
 }

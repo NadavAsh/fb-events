@@ -156,8 +156,8 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
             }
         }).start();
 
-        
-        RadioGroup radioGroup = (RadioGroup)view.findViewById(R.id.rsvp_radio_group);
+
+        RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.rsvp_radio_group);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
