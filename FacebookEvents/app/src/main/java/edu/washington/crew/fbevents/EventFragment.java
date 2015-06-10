@@ -14,8 +14,6 @@ import android.widget.TextView;
 
 import edu.washington.crew.fbevents.R;
 
-import edu.washington.crew.fbevents.dummy.DummyContent;
-
 /**
  * A fragment representing a list of Items.
  * <p/>
