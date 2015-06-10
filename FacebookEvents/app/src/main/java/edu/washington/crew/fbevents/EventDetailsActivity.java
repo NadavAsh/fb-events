@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Message;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
@@ -62,6 +64,11 @@ public class EventDetailsActivity extends ActionBarActivity {
 
 
         if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .replace(R.id.post_container, PostListFragment.newInstance(eventId))
+                    .commit();
+
             updateEventDetails();
             getAttending();
         }
@@ -92,6 +99,20 @@ public class EventDetailsActivity extends ActionBarActivity {
 
                     postText.setText("");
                     Toast.makeText(EventDetailsActivity.this, "Event message posted!", Toast.LENGTH_SHORT).show();
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Do something after 100ms
+                            for (Fragment f : getSupportFragmentManager().getFragments()) {
+                                if (f instanceof PostListFragment) {
+                                    ((PostListFragment) f).updatePosts();
+                                    break;
+                                }
+                            }
+                        }
+                    }, 1000);
+
                 } else {
                     Toast.makeText(EventDetailsActivity.this, "Message can't be blank.", Toast.LENGTH_SHORT).show();
                 }
