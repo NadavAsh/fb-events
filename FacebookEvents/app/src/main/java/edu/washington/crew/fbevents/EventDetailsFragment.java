@@ -55,7 +55,7 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
 
 
 
-    public static final String RSVP_STATUS = "edu.washington.crew.fmevents.RSVP_STATUS";
+    public static final String RSVP_STATUS = "edu.washington.crew.fbevents.RSVP_STATUS";
 
     private CallbackManager callbackManager;
 
