@@ -42,12 +42,10 @@ public class EventDetailsActivity extends ActionBarActivity {
 
     public static final String TAG = "EventDetailsActivity";
 
-    private FbEvent eventModel;
     private String eventId;
+    private FbEvent eventModel;
     private String postContent;
     private List<String> attending;
-
-    private AccessTokenTracker accessTokenTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

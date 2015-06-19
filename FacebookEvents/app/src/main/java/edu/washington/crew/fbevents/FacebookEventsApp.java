@@ -204,6 +204,8 @@ class FbEvent {
         }
     }
 
+    public FbEvent() { }
+
     public FbEvent(String id) {
         this.id = id;
     }
@@ -271,6 +273,10 @@ class FbEvent {
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getCoverPhotoUrl() {
