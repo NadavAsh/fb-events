@@ -20,6 +20,8 @@ import org.json.JSONObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import edu.washington.crew.fbevents.api.FbEventRepository;
+
 public class MainActivity extends ActionBarActivity implements EventListFragment.OnFragmentInteractionListener {
 
     public static final String TAG = "MainActivity";

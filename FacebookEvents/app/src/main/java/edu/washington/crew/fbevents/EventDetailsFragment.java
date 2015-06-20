@@ -42,6 +42,9 @@ import java.text.*;
 import java.text.ParseException;
 import java.util.*;
 
+import edu.washington.crew.fbevents.api.FbEvent;
+import edu.washington.crew.fbevents.api.FbEventRepository;
+
 
 public class EventDetailsFragment extends android.support.v4.app.Fragment {
     public static final String TAG = "EventDetailsFragment";

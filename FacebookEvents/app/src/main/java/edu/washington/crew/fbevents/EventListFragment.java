@@ -11,6 +11,8 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import edu.washington.crew.fbevents.api.FbEventRepository;
+
 /**
  * A fragment representing a list of Items.
  * <p/>

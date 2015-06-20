@@ -24,6 +24,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import edu.washington.crew.fbevents.api.FbPost;
+
 /**
  * A fragment representing a list of Items.
  * <p/>

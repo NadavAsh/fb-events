@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import edu.washington.crew.fbevents.api.*;
+
 public class EventAdapter extends ArrayAdapter<FbEvent> {
     public EventAdapter(Context context, ArrayList<FbEvent> events) {
         super(context, 0, events);

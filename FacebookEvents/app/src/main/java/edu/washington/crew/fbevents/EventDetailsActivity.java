@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.List;
 
 import edu.washington.crew.fbevents.R;
+import edu.washington.crew.fbevents.api.FbEvent;
 
 public class EventDetailsActivity extends ActionBarActivity {
     LoginManager loginManager;
