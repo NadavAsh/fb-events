@@ -37,13 +37,6 @@ public class EventListFragment extends Fragment implements AbsListView.OnItemCli
      */
     private ListAdapter mAdapter;
 
-    // TODO: Rename and change types of parameters
-    public static EventListFragment newInstance(String param1, String param2) {
-        EventListFragment fragment = new EventListFragment();
-        Bundle args = new Bundle();
-        return fragment;
-    }
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -69,6 +62,8 @@ public class EventListFragment extends Fragment implements AbsListView.OnItemCli
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+
+        setEmptyText("Loading events...");
 
         return view;
     }
