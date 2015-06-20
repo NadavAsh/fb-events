@@ -36,18 +36,17 @@ import java.util.Collection;
 import java.util.List;
 
 import edu.washington.crew.fbevents.R;
+import edu.washington.crew.fbevents.api.FbEvent;
 
 public class EventDetailsActivity extends ActionBarActivity {
     LoginManager loginManager;
 
     public static final String TAG = "EventDetailsActivity";
 
-    private FbEvent eventModel;
     private String eventId;
+    private FbEvent eventModel;
     private String postContent;
     private List<String> attending;
-
-    private AccessTokenTracker accessTokenTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

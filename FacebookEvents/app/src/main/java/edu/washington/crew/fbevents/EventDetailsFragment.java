@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.apache.http.*;
+import org.json.JSONException;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -41,6 +42,9 @@ import java.text.*;
 import java.text.ParseException;
 import java.util.*;
 
+import edu.washington.crew.fbevents.api.FbEvent;
+import edu.washington.crew.fbevents.api.FbEventRepository;
+
 
 public class EventDetailsFragment extends android.support.v4.app.Fragment {
     public static final String TAG = "EventDetailsFragment";
@@ -50,25 +54,13 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
     public static final String DESCRIPTION = "edu.washington.crew.fbevents.DESCRIPTION";
     public static final String LOCATION = "edu.washington.crew.fbevents.LOCATION";
     public static final String START_TIME = "edu.washington.crew.fbevents.START_TIME";
-
     public static final String COVER_PHOTO = "edu.washington.crew.fbevents.COVER_PHOTO";
-
-
-
     public static final String RSVP_STATUS = "edu.washington.crew.fbevents.RSVP_STATUS";
 
     private CallbackManager callbackManager;
+    private LoginManager loginManager;
 
-
-    private String eventId;
-    private String name;
-    private String description;
-    private String location;
-    private String start;
-
-    private String coverPhoto;
-
-    private String rsvpStatus;
+    private FbEvent eventModel;
 
     private boolean init;
 
@@ -101,18 +93,39 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        eventModel = new FbEvent();
 
-        Bundle args = getArguments();
-        eventId = args.getString(EVENT_ID);
-        name = args.getString(NAME);
-        description = args.getString(DESCRIPTION);
-        location = args.getString(LOCATION);
-        start = args.getString(START_TIME);
+        if (savedInstanceState != null) {
+        } else {
+            Bundle args = getArguments();
+            eventModel.setId(args.getString(EVENT_ID));
+            eventModel.setEventName(args.getString(NAME));
+            eventModel.setDescription(args.getString(DESCRIPTION));
+            eventModel.setLocation(args.getString(LOCATION));
+            eventModel.setCoverPhotoUrl(args.getString(COVER_PHOTO));
+            eventModel.setStartTime(args.getString(START_TIME));
+            eventModel.setRsvpStatus(args.getString(RSVP_STATUS));
+        }
 
-        coverPhoto = args.getString(COVER_PHOTO);
-
-        rsvpStatus = args.getString(RSVP_STATUS);
         callbackManager = CallbackManager.Factory.create();
+
+        loginManager = LoginManager.getInstance();
+        loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                publishRsvp();
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "Login cancelled.");
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+                Log.e(TAG, "Login failed.");
+            }
+        });
     }
 
     @Override
@@ -121,40 +134,45 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_event_details, container, false);
         TextView nameText = (TextView)view.findViewById(R.id.event_name);
-        nameText.setText(name);
+        nameText.setText(eventModel.getEventName());
         TextView startTimeText = (TextView)view.findViewById(R.id.event_time);
-        startTimeText.setText(start);
+        startTimeText.setText(eventModel.getStartTime());
         TextView descriptionText = (TextView)view.findViewById(R.id.description);
-        descriptionText.setText(description);
+        descriptionText.setText(eventModel.getDescription());
         final TextView locationText = (TextView)view.findViewById(R.id.event_location);
-        locationText.setText(location);
+        locationText.setText(eventModel.getLocation());
 
         final ImageView cover = (ImageView)view.findViewById(R.id.ivUserIcon);
-        new Thread(new Runnable() {
-            private Bitmap loadImageFromNetwork(String url){
-                try {
-                    Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(url).getContent());
-                    return bitmap;
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (eventModel.getCoverPhotoUrl() == null) {
+            cover.setVisibility(View.GONE);
+        } else {
+            new Thread(new Runnable() {
+                private Bitmap loadImageFromNetwork(String url) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(url).getContent());
+                        return bitmap;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
                 }
-                return null;
-            }
-            public void run(){
-                try {
-                    final Bitmap bitmap = loadImageFromNetwork(coverPhoto);
-                    cover.post(new Runnable() {
-                        public void run() {
-                            cover.setImageBitmap(bitmap);
-                        }
-                    });
 
-                } catch (Exception e) {
-                    Log.d("Image", "There is no photo for this event");
-                    e.printStackTrace();
+                public void run() {
+                    try {
+                        final Bitmap bitmap = loadImageFromNetwork(eventModel.getCoverPhotoUrl());
+                        cover.post(new Runnable() {
+                            public void run() {
+                                cover.setImageBitmap(bitmap);
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        Log.d("Image", "There is no photo for this event");
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
 
 
         RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.rsvp_radio_group);
@@ -166,41 +184,27 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
 
                 switch (checkedId) {
                     case R.id.attending_button:
-                        rsvpStatus = FbEvent.RSVP_ATTENDING;
+                        eventModel.setRsvpStatus(FbEvent.RSVP_ATTENDING);
                         break;
                     case R.id.maybe_button:
-                        rsvpStatus = "maybe";
+                        eventModel.setRsvpStatus("maybe");
                         break;
                     case R.id.decline_button:
-                        rsvpStatus = FbEvent.RSVP_DECLINE;
+                        eventModel.setRsvpStatus(FbEvent.RSVP_DECLINE);
                         break;
                 }
 
                 if (!AccessToken.getCurrentAccessToken().getPermissions().contains("rsvp_event")) {
-                    LoginManager loginManager = LoginManager.getInstance();
                     loginManager.logInWithPublishPermissions(getActivity(),
                             Arrays.asList("rsvp_event"));
-                    loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-                        @Override
-                        public void onSuccess(LoginResult loginResult) {
-                            publishRsvp();
-                        }
-                        @Override
-                        public void onCancel() {
-                            Log.d(TAG, "Login cancelled.");
-                        }
-                        @Override
-                        public void onError(FacebookException e) {
-                            Log.e(TAG, "Login failed.");
-                        }
-                    });
+
                 } else {
                     publishRsvp();
                 }
             }
         });
 
-        switch (rsvpStatus) {
+        switch (eventModel.getRsvpStatus()) {
             case FbEvent.RSVP_ATTENDING:
                 radioGroup.check(R.id.attending_button);
                 break;
@@ -223,9 +227,14 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(EVENT_ID, eventModel.getId());
+    }
+
     private void publishRsvp() {
         GraphRequest request = GraphRequest.newPostRequest(AccessToken.getCurrentAccessToken(),
-                eventId + "/" + rsvpStatus, null, new GraphRequest.Callback() {
+                eventModel.getId() + "/" + eventModel.getRsvpStatus(), null, new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse graphResponse) {
                         Log.d(TAG, graphResponse.toString());
