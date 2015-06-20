@@ -1,27 +1,15 @@
 package edu.washington.crew.fbevents;
 
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import android.content.pm.*;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.facebook.*;
 import com.facebook.login.LoginManager;
@@ -29,11 +17,10 @@ import com.facebook.login.LoginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class MainActivity extends ActionBarActivity implements EventFragment.OnFragmentInteractionListener {
+public class MainActivity extends ActionBarActivity implements EventListFragment.OnFragmentInteractionListener {
 
     public static final String TAG = "MainActivity";
 
@@ -72,7 +59,7 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new EventFragment())
+                    .add(R.id.container, new EventListFragment())
                     .commit();
         }
         if (!FacebookSdk.isInitialized()) {
@@ -170,7 +157,7 @@ public class MainActivity extends ActionBarActivity implements EventFragment.OnF
                         try {
                             repo.generateFromJsonArray(jsonObject.getJSONArray("data"));
                             getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.container, new EventFragment())
+                                    .replace(R.id.container, new EventListFragment())
                                     .commit();
                         } catch (JSONException e) {
                             Log.d(TAG, e.getMessage());

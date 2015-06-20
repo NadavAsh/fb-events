@@ -8,11 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-
-import edu.washington.crew.fbevents.R;
 
 /**
  * A fragment representing a list of Items.
@@ -23,7 +20,7 @@ import edu.washington.crew.fbevents.R;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class EventFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class EventListFragment extends Fragment implements AbsListView.OnItemClickListener {
 
     private OnFragmentInteractionListener mListener;
 
@@ -39,8 +36,8 @@ public class EventFragment extends Fragment implements AbsListView.OnItemClickLi
     private ListAdapter mAdapter;
 
     // TODO: Rename and change types of parameters
-    public static EventFragment newInstance(String param1, String param2) {
-        EventFragment fragment = new EventFragment();
+    public static EventListFragment newInstance(String param1, String param2) {
+        EventListFragment fragment = new EventListFragment();
         Bundle args = new Bundle();
         return fragment;
     }
@@ -49,7 +46,7 @@ public class EventFragment extends Fragment implements AbsListView.OnItemClickLi
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public EventFragment() {
+    public EventListFragment() {
     }
 
     @Override
