@@ -112,10 +112,12 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
             public void onSuccess(LoginResult loginResult) {
                 publishRsvp();
             }
+
             @Override
             public void onCancel() {
                 Log.d(TAG, "Login cancelled.");
             }
+
             @Override
             public void onError(FacebookException e) {
                 Log.e(TAG, "Login failed.");
@@ -138,31 +140,36 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
         locationText.setText(eventModel.getLocation());
 
         final ImageView cover = (ImageView)view.findViewById(R.id.ivUserIcon);
-        new Thread(new Runnable() {
-            private Bitmap loadImageFromNetwork(String url){
-                try {
-                    Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(url).getContent());
-                    return bitmap;
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (eventModel.getCoverPhotoUrl() == null) {
+            cover.setVisibility(View.GONE);
+        } else {
+            new Thread(new Runnable() {
+                private Bitmap loadImageFromNetwork(String url) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(url).getContent());
+                        return bitmap;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
                 }
-                return null;
-            }
-            public void run(){
-                try {
-                    final Bitmap bitmap = loadImageFromNetwork(eventModel.getCoverPhotoUrl());
-                    cover.post(new Runnable() {
-                        public void run() {
-                            cover.setImageBitmap(bitmap);
-                        }
-                    });
 
-                } catch (Exception e) {
-                    Log.d("Image", "There is no photo for this event");
-                    e.printStackTrace();
+                public void run() {
+                    try {
+                        final Bitmap bitmap = loadImageFromNetwork(eventModel.getCoverPhotoUrl());
+                        cover.post(new Runnable() {
+                            public void run() {
+                                cover.setImageBitmap(bitmap);
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        Log.d("Image", "There is no photo for this event");
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
 
 
         RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.rsvp_radio_group);
