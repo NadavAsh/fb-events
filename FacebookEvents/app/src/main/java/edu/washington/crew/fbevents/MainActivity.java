@@ -29,11 +29,13 @@ public class MainActivity extends ActionBarActivity implements EventListFragment
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
 
+    private FbEventRepository eventRepo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FbEventRepository repo = new FbEventRepository();
+        eventRepo = new FbEventRepository();
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(0xff3b5998));
 
@@ -144,6 +146,29 @@ public class MainActivity extends ActionBarActivity implements EventListFragment
     }
 
     private void fetchEventData() {
+        FbEventRepository.FbEvents.clear();
+        GraphRequest notReplied = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(),
+                "me/events/not_replied",
+                new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse graphResponse) {
+                        JSONObject jsonObject = graphResponse.getJSONObject();
+                        if (jsonObject == null) {
+                            Log.e(TAG, graphResponse.getError().getErrorMessage());
+                            return;
+                        }
+                        Log.d(TAG, jsonObject.toString());
+                        try {
+                            eventRepo.generateFromJsonArray(jsonObject.getJSONArray("data"));
+                        } catch (JSONException e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+                    }
+                });
+        Bundle params = new Bundle();
+        params.putString("fields", "start_time,end_time,name,timezone,rsvp_status,cover");
+        notReplied.setParameters(params);
+
         GraphRequest request = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(),
                 "me/events",
                 new GraphRequest.Callback() {
@@ -155,21 +180,25 @@ public class MainActivity extends ActionBarActivity implements EventListFragment
                             return;
                         }
                         Log.d(TAG, jsonObject.toString());
-                        FbEventRepository repo = new FbEventRepository();
                         try {
-                            repo.generateFromJsonArray(jsonObject.getJSONArray("data"));
-                            getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.container, new EventListFragment())
-                                    .commit();
+                            eventRepo.generateFromJsonArray(jsonObject.getJSONArray("data"));
                         } catch (JSONException e) {
                             Log.d(TAG, e.getMessage());
                         }
                     }
                 });
-        Bundle params = new Bundle();
-        params.putString("fields", "start_time,end_time,name,timezone,rsvp_status,cover");
         request.setParameters(params);
-        request.executeAsync();
+
+        GraphRequestBatch batch = new GraphRequestBatch(notReplied, request);
+        batch.addCallback(new GraphRequestBatch.Callback() {
+            @Override
+            public void onBatchCompleted(GraphRequestBatch graphRequestBatch) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, new EventListFragment())
+                        .commit();
+            }
+        });
+        batch.executeAsync();
     }
 
 }
