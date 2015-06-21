@@ -1,5 +1,7 @@
 package edu.washington.crew.fbevents.api;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -15,7 +17,7 @@ import java.util.Date;
 /**
  * Created by nadavash on 6/20/15.
  */
-public class FbEvent {
+public class FbEvent implements Parcelable {
     // @TODO: Leverage a date object for startTime and int for ID; kept it String for parsing JSON to preserve simplicity
     public static final String RSVP_ATTENDING = "attending";
     public static final String RSVP_MAYBE = "unsure";
@@ -100,12 +102,17 @@ public class FbEvent {
         this.id = id;
     }
 
-    public FbEvent(String eventName, String startTime, String timeZone, String id, String rsvpStatus) {
-        this.eventName = eventName;
-        this.startTime = startTime;
-        this.timeZone = timeZone;
-        this.id = id;
-        this.rsvpStatus = rsvpStatus;
+    public FbEvent(Parcel in) {
+        id = in.readString();
+        coverPhotoUrl = in.readString();
+        description = in.readString();
+        eventName = in.readString();
+        in.readStringArray(owner);
+        location = in.readString();
+        startTime = in.readString();
+        endTime = in.readString();
+        timeZone = in.readString();
+        rsvpStatus = in.readString();
     }
 
     @Override
@@ -192,4 +199,34 @@ public class FbEvent {
     public void setRsvpStatus(String rsvp) {
         rsvpStatus = rsvp;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(coverPhotoUrl);
+        dest.writeString(description);
+        dest.writeString(eventName);
+        dest.writeStringArray(owner);
+        dest.writeString(location);
+        dest.writeString(startTime);
+        dest.writeString(endTime);
+        dest.writeString(timeZone);
+        dest.writeString(rsvpStatus);
+    }
+
+    public static final Parcelable.Creator<FbEvent> CREATOR
+            = new Parcelable.Creator<FbEvent>() {
+        public FbEvent createFromParcel(Parcel in) {
+            return new FbEvent(in);
+        }
+
+        public FbEvent[] newArray(int size) {
+            return new FbEvent[size];
+        }
+    };
 }

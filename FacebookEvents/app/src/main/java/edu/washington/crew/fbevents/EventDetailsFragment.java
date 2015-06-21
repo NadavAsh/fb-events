@@ -49,6 +49,7 @@ import edu.washington.crew.fbevents.api.FbEventRepository;
 public class EventDetailsFragment extends android.support.v4.app.Fragment {
     public static final String TAG = "EventDetailsFragment";
 
+    public static final String EVENT_MODEL = "edu.washington.crew.fbevents.EVENT_MODEL";
     public static final String EVENT_ID = "edu.washington.crew.fbevents.EVENT_ID";
     public static final String NAME = "edu.washington.crew.fbevents.NAME";
     public static final String DESCRIPTION = "edu.washington.crew.fbevents.DESCRIPTION";
@@ -80,7 +81,6 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
                 break;
             }
         }
-
         fragment.setArguments(args);
 
         return fragment;
@@ -93,10 +93,12 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        eventModel = new FbEvent();
 
         if (savedInstanceState != null) {
+            eventModel = savedInstanceState.getParcelable(EVENT_MODEL);
         } else {
+            eventModel = new FbEvent();
+
             Bundle args = getArguments();
             eventModel.setId(args.getString(EVENT_ID));
             eventModel.setEventName(args.getString(NAME));
@@ -229,7 +231,7 @@ public class EventDetailsFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(EVENT_ID, eventModel.getId());
+        outState.putParcelable(EVENT_MODEL, eventModel);
     }
 
     private void publishRsvp() {
