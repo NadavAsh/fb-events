@@ -6,15 +6,20 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Message;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -55,12 +60,8 @@ public class EventDetailsActivity extends ActionBarActivity {
 
         attending = new ArrayList<String>();
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(0xff3b5998));
-
         Intent intent = getIntent();
         eventId = intent.getStringExtra(EventDetailsFragment.EVENT_ID);
-
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -117,7 +118,24 @@ public class EventDetailsActivity extends ActionBarActivity {
                 }
             }
         });
+        final ActionBar actionBar = getSupportActionBar();
+        final ScrollView scroll = (ScrollView)findViewById(R.id.scrollView);
+        scroll.getViewTreeObserver().addOnScrollChangedListener(
+                new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                ColorDrawable alpha = new ColorDrawable(getResources().getColor(R.color.com_facebook_blue));
+                float photoHeight = getResources().getDimension(R.dimen.event_details_photo_height)
+                        - getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
+                int scrollY = scroll.getScrollY();
+                float ratio = (float)scrollY / photoHeight;
+                ratio = Math.min(ratio, 1);
+                actionBar.setElevation(ratio * 16);
+                alpha.setAlpha((int) (ratio * 255));
+                actionBar.setBackgroundDrawable(alpha);
 
+            }
+        });
     }
 
 

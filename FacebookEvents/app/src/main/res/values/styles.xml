@@ -3,4 +3,28 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     </style>
+
+    <!-- the theme applied to the application or activity -->
+    <style name="CustomActionBarTheme"
+        parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBarOverlay">true</item>
+        <item name="actionBarStyle">@style/EventDetailsActionBar</item>
+    </style>
+
+    <style name="EventDetailsActionBar"
+        parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="background">@color/com_facebook_blue</item>
+    </style>
+
+    <style name="LeftRoundedCorners"
+        parent="android:style/Theme.Holo">
+        <item name="android:topLeftRadius">2dp</item>
+        <item name="android:bottomLeftRadius">2dp</item>
+    </style>
+
+    <style name="RightRoundedCorners"
+        parent="android:style/Theme.Holo">
+        <item name="android:topRightRadius">2dp</item>
+        <item name="android:bottomRightRadius">2dp</item>
+    </style>
 </resources>
